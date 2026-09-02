@@ -11,7 +11,7 @@ public static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        try { Console.OutputEncoding = System.Text.Encoding.UTF8; } catch { }
         PrintHeader();
 
         if (args.Length == 0 || args[0] is "-h" or "--help" or "help")
