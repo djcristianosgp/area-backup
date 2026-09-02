@@ -1,0 +1,77 @@
+{
+  "repositoryPath": "C:\\Backup\\Atual",
+  "backupType": "Auto",
+  "sources": [
+    {
+      "id": "ERP",
+      "path": "C:\\ERP",
+      "description": "Sistema ERP Principal"
+    },
+    {
+      "id": "DOCUMENTOS",
+      "path": "D:\\Documentos\\ERP",
+      "description": "Documentos e Anexos"
+    },
+    {
+      "id": "XML",
+      "path": "E:\\XML",
+      "description": "Notas Fiscais Eletronicas XML"
+    }
+  ],
+  "exclusions": [
+    {
+      "pattern": "*.tmp",
+      "type": "Pattern"
+    },
+    {
+      "pattern": "*.log",
+      "type": "Pattern"
+    },
+    {
+      "pattern": "Temp",
+      "type": "DirectoryName"
+    },
+    {
+      "pattern": "Cache",
+      "type": "DirectoryName"
+    }
+  ],
+  "incremental": {
+    "enabled": true,
+    "maxIncrementalBackups": 7,
+    "maxDaysSinceFull": 7,
+    "useUsnJournal": true,
+    "useHashValidation": true
+  },
+  "compression": {
+    "algorithm": "Zip",
+    "level": "Optimal",
+    "deduplicationEnabled": false
+  },
+  "validation": {
+    "mode": "Quick",
+    "validateAfterBackup": true,
+    "performTestRestore": false
+  },
+  "retention": {
+    "enabled": true,
+    "keepFullBackups": 4,
+    "keepIncrementalBackups": 30,
+    "maxDays": 30,
+    "maxStorageSizeBytes": 0
+  },
+  "performance": {
+    "maxDegreeOfParallelism": 8,
+    "bufferSize": 65536,
+    "enableParallelScanning": true,
+    "enableParallelHashing": true,
+    "failOnLockedFile": false
+  },
+  "database": {
+    "enabled": false,
+    "providerType": "Firebird",
+    "databasePath": "C:\\ERP\\Data0001\\DADOS.FDB",
+    "username": "SYSDBA",
+    "password": "masterkey"
+  }
+}
