@@ -1,6 +1,6 @@
 # Mecanismo e Estratégia de Restauração (`RESTORE`)
 
-O mecanismo de restauração do **Atual Backup Engine** é capaz de reconstruir com fidelidade absoluta o estado do sistema em qualquer ponto no tempo histórico.
+O mecanismo de restauração do **Area Backup Engine** é capaz de reconstruir com fidelidade absoluta o estado do sistema em qualquer ponto no tempo histórico.
 
 ## 1. Resolução da Cadeia de Restauração
 

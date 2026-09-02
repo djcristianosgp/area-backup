@@ -1,15 +1,15 @@
-# Arquitetura do Atual Backup Engine
+# Arquitetura do Area Backup Engine
 
 ## 1. Visão Geral da Arquitetura
 
-O **Atual Backup Engine** foi concebido sob princípios rigorosos de **engenharia de software para resiliência e integridade de dados**, separando categoricamente as camadas de domínio, infraestrutura, acesso a dados, camada de banco de dados e fachadas de aplicação.
+O **Area Backup Engine** foi concebido sob princípios rigorosos de **engenharia de software para resiliência e integridade de dados**, separando categoricamente as camadas de domínio, infraestrutura, acesso a dados, camada de banco de dados e fachadas de aplicação.
 
 ```mermaid
 graph TD
-    UI[ERP Desktop / WinForms / CLI] --> Facade[Atual.Backup - BackupEngine]
-    Facade --> Core[Atual.Backup.Core - Contratos & Modelos]
-    Facade --> Infra[Atual.Backup.Infrastructure]
-    Facade --> DB[Atual.Backup.Database]
+    UI[ERP Desktop / WinForms / CLI] --> Facade[Area.Backup - BackupEngine]
+    Facade --> Core[Area.Backup.Core - Contratos & Modelos]
+    Facade --> Infra[Area.Backup.Infrastructure]
+    Facade --> DB[Area.Backup.Database]
 
     subgraph "Camada de Infraestrutura"
         Scanner[FileSystemScanner & ExclusionMatcher]

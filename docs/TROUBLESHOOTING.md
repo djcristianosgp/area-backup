@@ -18,7 +18,7 @@ Guia para solução de cenários excepcionais e resolução de dúvidas operacio
 
 ## 3. Erro: `BackupIntegrityException`
 - **Causa**: O manifesto foi alterado indevidamente ou os bytes do arquivo `.backup` foram corrompidos no disco (falha de hardware/bit-rot).
-- **Diagnóstico**: Execute `Atual.Backup.Cli validate --backup <caminho> --mode Full` para listar exatamente quais arquivos divergiram em relação ao checksum SHA-256 original.
+- **Diagnóstico**: Execute `Area.Backup.Cli validate --backup <caminho> --mode Full` para listar exatamente quais arquivos divergiram em relação ao checksum SHA-256 original.
 
 ---
 

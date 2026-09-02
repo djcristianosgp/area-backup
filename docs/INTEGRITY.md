@@ -1,6 +1,6 @@
 # Integridade Criptográfica e Validação (`INTEGRITY`)
 
-A integridade dos dados é o princípio de maior precedência no **Atual Backup Engine**.
+A integridade dos dados é o princípio de maior precedência no **Area Backup Engine**.
 
 ## 1. Modos de Validação (`ValidationMode`)
 

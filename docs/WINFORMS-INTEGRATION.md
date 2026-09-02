@@ -1,10 +1,10 @@
 # Integração com Windows Forms e ERP (`WINFORMS-INTEGRATION`)
 
-Este documento orienta como acoplar o `Atual.Backup` diretamente na interface de um ERP Windows Forms.
+Este documento orienta como acoplar o `Area.Backup` diretamente na interface de um ERP Windows Forms.
 
 ## 1. Passo a Passo de Integração
 
-1. Adicione a referência ao projeto `Atual.Backup` ou à DLL compilada.
+1. Adicione a referência ao projeto `Area.Backup` ou à DLL compilada.
 2. Crie uma instância de `BackupEngine` no formulário.
 3. Conecte o evento de progresso com `Progress<BackupProgress>` para atualizar os controles da tela na thread de UI do Windows Forms sem travamentos:
 
@@ -56,4 +56,4 @@ private async void btnIniciarBackup_Click(object sender, EventArgs e)
 ```
 
 Consulte o código completo no projeto de exemplo:
-[samples/Atual.Backup.WinForms.Sample](file:///c:/AtualDev/Prototipo/area-backup/samples/Atual.Backup.WinForms.Sample)
+[samples/Area.Backup.WinForms.Sample](file:///c:/AtualDev/Prototipo/area-backup/samples/Area.Backup.WinForms.Sample)

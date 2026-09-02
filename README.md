@@ -1,4 +1,4 @@
-# Atual Backup Engine (.NET 10)
+# Area Backup Engine (.NET 10)
 
 Uma biblioteca de classe e engine profissional de **backup incremental e recuperação de desastres** em C# / .NET 10, projetada com foco inegociável em **integridade criptográfica, capacidade de restauração e alta performance** para sistemas ERP desktop (Windows Forms, WPF) e serviços em segundo plano.
 
@@ -31,21 +31,21 @@ Uma biblioteca de classe e engine profissional de **backup incremental e recuper
 ## 📂 Estrutura da Solução
 
 ```text
-Atual.Backup.slnx
+Area.Backup.slnx
 │
 ├── src/
-│   ├── Atual.Backup.Core/            # Interfaces, modelos, enums, contratos e exceções
-│   ├── Atual.Backup.Infrastructure/  # Scanner, Change Detection, Catálogo SQLite, Manifest, Zip, Storage
-│   ├── Atual.Backup.Database/        # Provedores de banco (Firebird, PostgreSQL)
-│   ├── Atual.Backup/                 # Fachada pública (BackupEngine) e injeção de dependência
-│   └── Atual.Backup.Cli/             # Ferramenta CLI de linha de comando
+│   ├── Area.Backup.Core/            # Interfaces, modelos, enums, contratos e exceções
+│   ├── Area.Backup.Infrastructure/  # Scanner, Change Detection, Catálogo SQLite, Manifest, Zip, Storage
+│   ├── Area.Backup.Database/        # Provedores de banco (Firebird, PostgreSQL)
+│   ├── Area.Backup/                 # Fachada pública (BackupEngine) e injeção de dependência
+│   └── Area.Backup.Cli/             # Ferramenta CLI de linha de comando
 │
 ├── tests/
-│   ├── Atual.Backup.UnitTests/       # Testes unitários (Scanner, Exclusões, Hash, SQLite, Retenção, Manifest)
-│   └── Atual.Backup.IntegrationTests/# Testes de integração (Full, Incremental, Restore, Corrupção, Concorrência)
+│   ├── Area.Backup.UnitTests/       # Testes unitários (Scanner, Exclusões, Hash, SQLite, Retenção, Manifest)
+│   └── Area.Backup.IntegrationTests/# Testes de integração (Full, Incremental, Restore, Corrupção, Concorrência)
 │
 ├── samples/
-│   ├── Atual.Backup.WinForms.Sample/ # Exemplo real de integração com Windows Forms
+│   ├── Area.Backup.WinForms.Sample/ # Exemplo real de integração com Windows Forms
 │   └── config.sample.json            # Exemplo de configuração JSON
 │
 └── docs/                             # Documentação técnica completa
@@ -61,17 +61,17 @@ Atual.Backup.slnx
 
 ### Compilação da Solução
 ```powershell
-dotnet build Atual.Backup.slnx -c Release
+dotnet build Area.Backup.slnx -c Release
 ```
 
 ### Execução dos Testes Automatizados
 ```powershell
-dotnet test Atual.Backup.slnx -c Release --verbosity normal
+dotnet test Area.Backup.slnx -c Release --verbosity normal
 ```
 
 ### Publicação da DLL
 ```powershell
-dotnet publish src/Atual.Backup/Atual.Backup.csproj -c Release -o ./publish/lib
+dotnet publish src/Area.Backup/Area.Backup.csproj -c Release -o ./publish/lib
 ```
 
 ---
@@ -79,9 +79,9 @@ dotnet publish src/Atual.Backup/Atual.Backup.csproj -c Release -o ./publish/lib
 ## 💻 Exemplo de Uso no ERP (C#)
 
 ```csharp
-using Atual.Backup;
-using Atual.Backup.Core.Enums;
-using Atual.Backup.Core.Models;
+using Area.Backup;
+using Area.Backup.Core.Enums;
+using Area.Backup.Core.Models;
 
 // 1. Configurar o Backup
 var configuration = new BackupConfiguration
@@ -145,28 +145,28 @@ if (result.Success)
 
 ---
 
-## 🖥️ Utilizando a Ferramenta CLI (`Atual.Backup.Cli`)
+## 🖥️ Utilizando a Ferramenta CLI (`Area.Backup.Cli`)
 
 A ferramenta de linha de comando permite testar e automatizar rotinas:
 
 ```powershell
 # Executar backup com base em JSON
-Atual.Backup.Cli backup --config ./samples/config.sample.json
+Area.Backup.Cli backup --config ./samples/config.sample.json
 
 # Validar integridade com verificação criptográfica SHA-256
-Atual.Backup.Cli validate --backup C:\Backup\Atual\2026\09\20260902-143000-full.backup --mode Full
+Area.Backup.Cli validate --backup C:\Backup\Atual\2026\09\20260902-143000-full.backup --mode Full
 
 # Restaurar ponto de recuperação para uma pasta limpa
-Atual.Backup.Cli restore --backup C:\Backup\Atual\2026\09\20260902-150000-incremental.backup --destination C:\Restore\Teste
+Area.Backup.Cli restore --backup C:\Backup\Atual\2026\09\20260902-150000-incremental.backup --destination C:\Restore\Teste
 
 # Obter informações do cabeçalho do arquivo .backup
-Atual.Backup.Cli info --backup C:\Backup\Atual\2026\09\20260902-143000-full.backup
+Area.Backup.Cli info --backup C:\Backup\Atual\2026\09\20260902-143000-full.backup
 
 # Listar histórico de backups do repositório
-Atual.Backup.Cli list --repository C:\Backup\Atual
+Area.Backup.Cli list --repository C:\Backup\Atual
 
 # Executar benchmark sintético de performance (Full vs Incremental)
-Atual.Backup.Cli benchmark --files 2000 --size 32
+Area.Backup.Cli benchmark --files 2000 --size 32
 ```
 
 ---

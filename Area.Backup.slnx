@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/Area.Backup.WinForms.Sample/Area.Backup.WinForms.Sample.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Area.Backup.Cli/Area.Backup.Cli.csproj" />
+    <Project Path="src/Area.Backup.Core/Area.Backup.Core.csproj" />
+    <Project Path="src/Area.Backup.Database/Area.Backup.Database.csproj" />
+    <Project Path="src/Area.Backup.Infrastructure/Area.Backup.Infrastructure.csproj" />
+    <Project Path="src/Area.Backup/Area.Backup.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Area.Backup.IntegrationTests/Area.Backup.IntegrationTests.csproj" />
+    <Project Path="tests/Area.Backup.UnitTests/Area.Backup.UnitTests.csproj" />
+  </Folder>
+</Solution>

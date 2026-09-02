@@ -1,6 +1,6 @@
 # Performance, Streaming e USN Journal (`PERFORMANCE`)
 
-O **Atual Backup Engine** foi projetado para operar com centenas de milhares de arquivos mantendo baixo consumo de memória RAM e preservando a vida útil e velocidade do subsistema de disco.
+O **Area Backup Engine** foi projetado para operar com centenas de milhares de arquivos mantendo baixo consumo de memória RAM e preservando a vida útil e velocidade do subsistema de disco.
 
 ## 1. Zero Cópia Intermediária (Direct Streaming)
 

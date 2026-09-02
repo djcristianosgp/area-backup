@@ -1,11 +1,11 @@
-# Guia da API Pública — Atual Backup Engine
+# Guia da API Pública — Area Backup Engine
 
 A fachada principal de utilização da biblioteca é a classe `BackupEngine`, que implementa a interface `IBackupEngine`.
 
 ## 1. Interface Principal (`IBackupEngine`)
 
 ```csharp
-namespace Atual.Backup.Core.Interfaces;
+namespace Area.Backup.Core.Interfaces;
 
 public interface IBackupEngine
 {
@@ -47,9 +47,9 @@ public interface IBackupEngine
 Caso a aplicação utilize `Microsoft.Extensions.DependencyInjection`:
 
 ```csharp
-using Atual.Backup.Extensions;
+using Area.Backup.Extensions;
 
-services.AddAtualBackup();
+services.AddAreaBackup();
 ```
 
 ---

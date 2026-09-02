@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Area.Backup\Area.Backup.csproj" />
+    <ProjectReference Include="..\..\src\Area.Backup.Core\Area.Backup.Core.csproj" />
+    <ProjectReference Include="..\..\src\Area.Backup.Infrastructure\Area.Backup.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Area.Backup.Database\Area.Backup.Database.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

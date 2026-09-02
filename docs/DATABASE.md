@@ -1,6 +1,6 @@
 # Provedores de Banco de Dados (`DATABASE`)
 
-O **Atual Backup Engine** possui uma camada de abstração dedicada para bancos de dados relacionais (`Atual.Backup.Database`), evitando o erro crítico de tentar copiar arquivos `.fdb` ou bases ativas em execução com `File.Copy`.
+O **Area Backup Engine** possui uma camada de abstração dedicada para bancos de dados relacionais (`Area.Backup.Database`), evitando o erro crítico de tentar copiar arquivos `.fdb` ou bases ativas em execução com `File.Copy`.
 
 ## 1. Firebird (`FirebirdBackupProvider`)
 
