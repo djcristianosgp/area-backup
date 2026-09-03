@@ -5,12 +5,18 @@ namespace Area.Backup.WinForms.Sample.Views;
 
 public sealed class LogsView : UserControl
 {
-    private RichTextBox _rtbLogs = null!;
+    private Label _lblTitle = null!;
+    private Label _lblSubtitle = null!;
+
+    private Panel _pnlToolbar = null!;
     private ComboBox _cboFilter = null!;
     private TextBox _txtSearch = null!;
     private ModernButton _btnClear = null!;
     private ModernButton _btnExport = null!;
     private CheckBox _chkAutoScroll = null!;
+
+    private CardPanel _cardTerminal = null!;
+    private RichTextBox _rtbLogs = null!;
 
     private readonly List<(DateTime time, string level, string message)> _allLogs = [];
 
@@ -23,10 +29,10 @@ public sealed class LogsView : UserControl
     {
         Dock = DockStyle.Fill;
         BackColor = ModernTheme.CanvasBg;
-        Padding = new Padding(24);
+        AutoScroll = true;
 
         // Header Title
-        var lblTitle = new Label
+        _lblTitle = new Label
         {
             Text = "Console de Logs & Auditoria",
             Font = ModernTheme.TitleFont,
@@ -34,7 +40,7 @@ public sealed class LogsView : UserControl
             AutoSize = true,
             Location = new Point(24, 20)
         };
-        var lblSubtitle = new Label
+        _lblSubtitle = new Label
         {
             Text = "Registro cronológico detalhado de eventos da engine, validações de hash e diagnóstico de execução.",
             Font = ModernTheme.BodyFont,
@@ -42,15 +48,14 @@ public sealed class LogsView : UserControl
             AutoSize = true,
             Location = new Point(24, 52)
         };
-        Controls.Add(lblTitle);
-        Controls.Add(lblSubtitle);
+        Controls.Add(_lblTitle);
+        Controls.Add(_lblSubtitle);
 
         // --- Toolbar ---
-        var pnlToolbar = new Panel
+        _pnlToolbar = new Panel
         {
             Location = new Point(24, 85),
-            Size = new Size(940, 42),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            Height = 42
         };
 
         var lblF = new Label { Text = "Filtrar:", Font = ModernTheme.BodyBold, Location = new Point(0, 10), AutoSize = true };
@@ -88,9 +93,7 @@ public sealed class LogsView : UserControl
         {
             Text = "🗑️  Limpar",
             ButtonStyle = ModernButtonStyle.Secondary,
-            Location = new Point(710, 5),
-            Size = new Size(105, 30),
-            Anchor = AnchorStyles.Top | AnchorStyles.Right
+            Size = new Size(100, 30)
         };
         _btnClear.Click += (_, _) => ClearLogs();
 
@@ -98,29 +101,25 @@ public sealed class LogsView : UserControl
         {
             Text = "💾  Exportar Log",
             ButtonStyle = ModernButtonStyle.Secondary,
-            Location = new Point(825, 5),
-            Size = new Size(115, 30),
-            Anchor = AnchorStyles.Top | AnchorStyles.Right
+            Size = new Size(120, 30)
         };
         _btnExport.Click += (_, _) => ExportLog();
 
-        pnlToolbar.Controls.Add(lblF);
-        pnlToolbar.Controls.Add(_cboFilter);
-        pnlToolbar.Controls.Add(lblS);
-        pnlToolbar.Controls.Add(_txtSearch);
-        pnlToolbar.Controls.Add(_chkAutoScroll);
-        pnlToolbar.Controls.Add(_btnClear);
-        pnlToolbar.Controls.Add(_btnExport);
-        Controls.Add(pnlToolbar);
+        _pnlToolbar.Controls.Add(lblF);
+        _pnlToolbar.Controls.Add(_cboFilter);
+        _pnlToolbar.Controls.Add(lblS);
+        _pnlToolbar.Controls.Add(_txtSearch);
+        _pnlToolbar.Controls.Add(_chkAutoScroll);
+        _pnlToolbar.Controls.Add(_btnClear);
+        _pnlToolbar.Controls.Add(_btnExport);
+        Controls.Add(_pnlToolbar);
 
         // --- Terminal Container ---
-        var cardTerminal = new CardPanel
+        _cardTerminal = new CardPanel
         {
             CardBackground = ModernTheme.TerminalBg,
             BorderColor = Color.FromArgb(30, 41, 59),
             Location = new Point(24, 135),
-            Size = new Size(940, 485),
-            Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
             Padding = new Padding(12)
         };
 
@@ -135,8 +134,32 @@ public sealed class LogsView : UserControl
             ScrollBars = RichTextBoxScrollBars.Vertical
         };
 
-        cardTerminal.Controls.Add(_rtbLogs);
-        Controls.Add(cardTerminal);
+        _cardTerminal.Controls.Add(_rtbLogs);
+        Controls.Add(_cardTerminal);
+
+        PerformCustomLayout();
+    }
+
+    protected override void OnResize(EventArgs e)
+    {
+        base.OnResize(e);
+        PerformCustomLayout();
+    }
+
+    private void PerformCustomLayout()
+    {
+        if (_pnlToolbar == null || _cardTerminal == null) return;
+
+        int cardWidth = Math.Max(600, ClientSize.Width - 48);
+
+        _pnlToolbar.Location = new Point(24, 85);
+        _pnlToolbar.Width = cardWidth;
+        _btnExport.Location = new Point(cardWidth - 120, 5);
+        _btnClear.Location = new Point(cardWidth - 230, 5);
+
+        _cardTerminal.Location = new Point(24, 135);
+        _cardTerminal.Width = cardWidth;
+        _cardTerminal.Height = Math.Max(300, ClientSize.Height - 160);
     }
 
     public void AppendLog(string level, string message)

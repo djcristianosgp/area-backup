@@ -13,20 +13,26 @@ public sealed class TestLabView : UserControl
     private readonly TestScenarioState _testState = new();
 
     // UI Controls
+    private Label _lblTitle = null!;
+    private Label _lblSubtitle = null!;
+
+    private FlowLayoutPanel _pnlKpis = null!;
     private MetricCard _kpiFiles = null!;
     private MetricCard _kpiAdded = null!;
     private MetricCard _kpiModified = null!;
     private MetricCard _kpiParity = null!;
 
+    private CardPanel _cardSteps = null!;
     private ModernButton _btnCreateDataset = null!;
     private ModernButton _btnMutate = null!;
     private ModernButton _btnRunBackup = null!;
     private ModernButton _btnSandboxRestore = null!;
     private ModernButton _btnValidateArchive = null!;
-
-    private TextBox _txtTestConsole = null!;
     private ModernProgressBar _progressBar = null!;
     private Label _lblStatus = null!;
+
+    private CardPanel _cardOutput = null!;
+    private TextBox _txtTestConsole = null!;
 
     public TestLabView(BackupEngine engine, Action<string, string> logAction)
     {
@@ -41,10 +47,9 @@ public sealed class TestLabView : UserControl
         Dock = DockStyle.Fill;
         BackColor = ModernTheme.CanvasBg;
         AutoScroll = true;
-        Padding = new Padding(24);
 
         // Header Title
-        var lblTitle = new Label
+        _lblTitle = new Label
         {
             Text = "Laboratório de Testes & Simulação (Sandbox)",
             Font = ModernTheme.TitleFont,
@@ -52,7 +57,7 @@ public sealed class TestLabView : UserControl
             AutoSize = true,
             Location = new Point(24, 20)
         };
-        var lblSubtitle = new Label
+        _lblSubtitle = new Label
         {
             Text = "Gere dados fictícios, simule mutações incrementais e valide a restauração criptográfica bit a bit em sandbox isolado.",
             Font = ModernTheme.BodyFont,
@@ -60,38 +65,39 @@ public sealed class TestLabView : UserControl
             AutoSize = true,
             Location = new Point(24, 52)
         };
-        Controls.Add(lblTitle);
-        Controls.Add(lblSubtitle);
+        Controls.Add(_lblTitle);
+        Controls.Add(_lblSubtitle);
 
         // --- Row 1: KPI Stats ---
-        var pnlKpis = new FlowLayoutPanel
+        _pnlKpis = new FlowLayoutPanel
         {
             Location = new Point(24, 85),
-            Size = new Size(940, 105),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-            WrapContents = false
+            Size = new Size(880, 100),
+            WrapContents = false,
+            AutoScroll = false,
+            Margin = new Padding(0),
+            Padding = new Padding(0)
         };
 
-        _kpiFiles = new MetricCard { Title = "Arquivos no Teste", Value = "0", Subtitle = "Origem isolada", Width = 220 };
-        _kpiAdded = new MetricCard { Title = "Novos Arquivos", Value = "0", Subtitle = "Mutações simuladas", Width = 220 };
-        _kpiModified = new MetricCard { Title = "Modificados", Value = "0", Subtitle = "Arquivos alterados", Width = 220 };
-        _kpiParity = new MetricCard { Title = "Paridade SHA-256", Value = "--", Subtitle = "Sandbox audit", Width = 220 };
+        _kpiFiles = new MetricCard { Title = "Arquivos no Teste", Value = "0", Subtitle = "Origem isolada", Height = 95 };
+        _kpiAdded = new MetricCard { Title = "Novos Arquivos", Value = "0", Subtitle = "Mutações simuladas", Height = 95 };
+        _kpiModified = new MetricCard { Title = "Modificados", Value = "0", Subtitle = "Arquivos alterados", Height = 95 };
+        _kpiParity = new MetricCard { Title = "Paridade SHA-256", Value = "--", Subtitle = "Sandbox audit", Height = 95 };
         _kpiParity.SetBadge("AGUARDANDO", ModernTheme.SectionHeader, ModernTheme.TextSecondary);
 
-        pnlKpis.Controls.Add(_kpiFiles);
-        pnlKpis.Controls.Add(_kpiAdded);
-        pnlKpis.Controls.Add(_kpiModified);
-        pnlKpis.Controls.Add(_kpiParity);
-        Controls.Add(pnlKpis);
+        _pnlKpis.Controls.Add(_kpiFiles);
+        _pnlKpis.Controls.Add(_kpiAdded);
+        _pnlKpis.Controls.Add(_kpiModified);
+        _pnlKpis.Controls.Add(_kpiParity);
+        Controls.Add(_pnlKpis);
 
         // --- Row 2: Workflow Steps Card ---
-        var cardSteps = new CardPanel
+        _cardSteps = new CardPanel
         {
             Title = "Fluxo Guiado de Teste Incremental & Integridade",
             Subtitle = "Execute as etapas sequencialmente para comprovar o funcionamento da DLL sem risco aos dados de produção",
-            Location = new Point(24, 205),
-            Size = new Size(940, 155),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            Location = new Point(24, 195),
+            Height = 160
         };
 
         _btnCreateDataset = new ModernButton
@@ -99,7 +105,7 @@ public sealed class TestLabView : UserControl
             Text = "1. Criar Dataset ERP",
             ButtonStyle = ModernButtonStyle.Primary,
             Location = new Point(24, 55),
-            Size = new Size(170, 36)
+            Size = new Size(160, 36)
         };
         _btnCreateDataset.Click += (_, _) => CreateDataset();
 
@@ -107,8 +113,8 @@ public sealed class TestLabView : UserControl
         {
             Text = "2. Simular Mutações",
             ButtonStyle = ModernButtonStyle.Secondary,
-            Location = new Point(205, 55),
-            Size = new Size(170, 36),
+            Location = new Point(195, 55),
+            Size = new Size(160, 36),
             Enabled = false
         };
         _btnMutate.Click += (_, _) => MutateDataset();
@@ -117,7 +123,7 @@ public sealed class TestLabView : UserControl
         {
             Text = "3. Rodar Backup Teste",
             ButtonStyle = ModernButtonStyle.Success,
-            Location = new Point(385, 55),
+            Location = new Point(365, 55),
             Size = new Size(170, 36),
             Enabled = false
         };
@@ -127,7 +133,7 @@ public sealed class TestLabView : UserControl
         {
             Text = "4. Restaurar & Conferir SHA",
             ButtonStyle = ModernButtonStyle.Outline,
-            Location = new Point(565, 55),
+            Location = new Point(545, 55),
             Size = new Size(190, 36),
             Enabled = false
         };
@@ -137,8 +143,8 @@ public sealed class TestLabView : UserControl
         {
             Text = "Auditar Pacote",
             ButtonStyle = ModernButtonStyle.Secondary,
-            Location = new Point(765, 55),
-            Size = new Size(140, 36),
+            Location = new Point(745, 55),
+            Size = new Size(130, 36),
             Enabled = false
         };
         _btnValidateArchive.Click += async (_, _) => await ValidateLatestBackupAsync();
@@ -146,8 +152,7 @@ public sealed class TestLabView : UserControl
         _progressBar = new ModernProgressBar
         {
             Location = new Point(24, 105),
-            Size = new Size(880, 20),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+            Height = 20,
             Value = 0
         };
 
@@ -156,27 +161,26 @@ public sealed class TestLabView : UserControl
             Text = "Pronto. Clique em '1. Criar Dataset ERP' para iniciar o laboratório.",
             Font = ModernTheme.BodyFont,
             ForeColor = ModernTheme.TextSecondary,
-            Location = new Point(24, 128),
+            Location = new Point(24, 130),
             AutoSize = true
         };
 
-        cardSteps.Controls.Add(_btnCreateDataset);
-        cardSteps.Controls.Add(_btnMutate);
-        cardSteps.Controls.Add(_btnRunBackup);
-        cardSteps.Controls.Add(_btnSandboxRestore);
-        cardSteps.Controls.Add(_btnValidateArchive);
-        cardSteps.Controls.Add(_progressBar);
-        cardSteps.Controls.Add(_lblStatus);
-        Controls.Add(cardSteps);
+        _cardSteps.Controls.Add(_btnCreateDataset);
+        _cardSteps.Controls.Add(_btnMutate);
+        _cardSteps.Controls.Add(_btnRunBackup);
+        _cardSteps.Controls.Add(_btnSandboxRestore);
+        _cardSteps.Controls.Add(_btnValidateArchive);
+        _cardSteps.Controls.Add(_progressBar);
+        _cardSteps.Controls.Add(_lblStatus);
+        Controls.Add(_cardSteps);
 
         // --- Row 3: Live Output Terminal ---
-        var cardOutput = new CardPanel
+        _cardOutput = new CardPanel
         {
             Title = "Relatório de Auditoria e Diagnóstico do Laboratório",
             Subtitle = "Saída detalhada das operações de teste, paridade de arquivos e hashes",
-            Location = new Point(24, 375),
-            Size = new Size(940, 260),
-            Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+            Location = new Point(24, 370),
+            Height = 280
         };
 
         _txtTestConsole = new TextBox
@@ -184,14 +188,49 @@ public sealed class TestLabView : UserControl
             Multiline = true,
             ReadOnly = true,
             ScrollBars = ScrollBars.Vertical,
-            Dock = DockStyle.Fill,
+            Location = new Point(16, 50),
             BackColor = ModernTheme.TerminalBg,
             ForeColor = ModernTheme.TerminalGreen,
             Font = ModernTheme.MonoFont
         };
 
-        cardOutput.Controls.Add(_txtTestConsole);
-        Controls.Add(cardOutput);
+        _cardOutput.Controls.Add(_txtTestConsole);
+        Controls.Add(_cardOutput);
+
+        PerformCustomLayout();
+    }
+
+    protected override void OnResize(EventArgs e)
+    {
+        base.OnResize(e);
+        PerformCustomLayout();
+    }
+
+    private void PerformCustomLayout()
+    {
+        if (_cardSteps == null || _cardOutput == null || _pnlKpis == null) return;
+
+        int cardWidth = Math.Max(600, ClientSize.Width - 48);
+
+        // KPIs
+        _pnlKpis.Location = new Point(24, 85);
+        _pnlKpis.Width = cardWidth;
+        int kpiCardWidth = (cardWidth - 36) / 4;
+        _kpiFiles.Width = kpiCardWidth;
+        _kpiAdded.Width = kpiCardWidth;
+        _kpiModified.Width = kpiCardWidth;
+        _kpiParity.Width = kpiCardWidth;
+
+        // Card Steps
+        _cardSteps.Location = new Point(24, 195);
+        _cardSteps.Width = cardWidth;
+        _progressBar.Width = cardWidth - 48;
+
+        // Card Output
+        _cardOutput.Location = new Point(24, 370);
+        _cardOutput.Width = cardWidth;
+        _txtTestConsole.Location = new Point(16, 50);
+        _txtTestConsole.Size = new Size(cardWidth - 32, _cardOutput.Height - 66);
     }
 
     private void CreateDataset()

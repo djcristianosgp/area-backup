@@ -11,14 +11,21 @@ public sealed class CatalogView : UserControl
     private readonly Func<BackupConfiguration> _getConfigFunc;
     private readonly Action<string, string> _logAction;
 
+    // Header
+    private Label _lblTitle = null!;
+    private Label _lblSubtitle = null!;
+
     // UI Controls
+    private CardPanel _cardRepo = null!;
     private TextBox _txtRepository = null!;
     private ModernButton _btnBrowseRepo = null!;
     private ModernButton _btnRefreshCatalog = null!;
-
-    private DataGridView _gridCatalog = null!;
     private MetricCard _kpiTotalPoints = null!;
 
+    private CardPanel _cardGrid = null!;
+    private DataGridView _gridCatalog = null!;
+
+    private CardPanel _cardRestore = null!;
     private TextBox _txtRestoreDest = null!;
     private ModernButton _btnBrowseDest = null!;
     private CheckBox _chkOverwrite = null!;
@@ -40,10 +47,9 @@ public sealed class CatalogView : UserControl
         Dock = DockStyle.Fill;
         BackColor = ModernTheme.CanvasBg;
         AutoScroll = true;
-        Padding = new Padding(24);
 
         // Header Title
-        var lblTitle = new Label
+        _lblTitle = new Label
         {
             Text = "Catálogo & Restauração Ponto no Tempo",
             Font = ModernTheme.TitleFont,
@@ -51,7 +57,7 @@ public sealed class CatalogView : UserControl
             AutoSize = true,
             Location = new Point(24, 20)
         };
-        var lblSubtitle = new Label
+        _lblSubtitle = new Label
         {
             Text = "Consulte o histórico persistente do SQLite (catalog.db), audite cadeias e restaure pontos históricos com precisão.",
             Font = ModernTheme.BodyFont,
@@ -59,32 +65,27 @@ public sealed class CatalogView : UserControl
             AutoSize = true,
             Location = new Point(24, 52)
         };
-        Controls.Add(lblTitle);
-        Controls.Add(lblSubtitle);
+        Controls.Add(_lblTitle);
+        Controls.Add(_lblSubtitle);
 
         // --- Row 1: Repository Selector & KPIs ---
-        var cardRepo = new CardPanel
+        _cardRepo = new CardPanel
         {
             Location = new Point(24, 85),
-            Size = new Size(940, 95),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            Height = 95
         };
 
         var lblRepo = new Label { Text = "Repositório:", Font = ModernTheme.BodyBold, Location = new Point(16, 16), AutoSize = true };
         _txtRepository = new TextBox
         {
             Location = new Point(16, 40),
-            Size = new Size(450, 26),
-            Font = ModernTheme.BodyFont,
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            Font = ModernTheme.BodyFont
         };
         _btnBrowseRepo = new ModernButton
         {
             Text = "Procurar...",
             ButtonStyle = ModernButtonStyle.Secondary,
-            Location = new Point(475, 38),
-            Size = new Size(100, 28),
-            Anchor = AnchorStyles.Top | AnchorStyles.Right
+            Size = new Size(100, 28)
         };
         _btnBrowseRepo.Click += (_, _) => BrowseFolder(_txtRepository);
 
@@ -92,37 +93,32 @@ public sealed class CatalogView : UserControl
         {
             Text = "🔄  Carregar Catálogo",
             ButtonStyle = ModernButtonStyle.Primary,
-            Location = new Point(585, 36),
-            Size = new Size(160, 32),
-            Anchor = AnchorStyles.Top | AnchorStyles.Right
+            Size = new Size(160, 32)
         };
         _btnRefreshCatalog.Click += async (_, _) => await RefreshCatalogAsync();
 
-        cardRepo.Controls.Add(lblRepo);
-        cardRepo.Controls.Add(_txtRepository);
-        cardRepo.Controls.Add(_btnBrowseRepo);
-        cardRepo.Controls.Add(_btnRefreshCatalog);
+        _kpiTotalPoints = new MetricCard { Title = "Total Pontos", Value = "0", Subtitle = "No catálogo", Size = new Size(170, 80) };
 
-        _kpiTotalPoints = new MetricCard { Title = "Total Pontos", Value = "0", Subtitle = "No catálogo", Location = new Point(755, 6), Size = new Size(170, 80), Anchor = AnchorStyles.Top | AnchorStyles.Right };
-        cardRepo.Controls.Add(_kpiTotalPoints);
+        _cardRepo.Controls.Add(lblRepo);
+        _cardRepo.Controls.Add(_txtRepository);
+        _cardRepo.Controls.Add(_btnBrowseRepo);
+        _cardRepo.Controls.Add(_btnRefreshCatalog);
+        _cardRepo.Controls.Add(_kpiTotalPoints);
 
-        Controls.Add(cardRepo);
+        Controls.Add(_cardRepo);
 
         // --- Row 2: Data Table Grid ---
-        var cardGrid = new CardPanel
+        _cardGrid = new CardPanel
         {
             Title = "Pontos de Recuperação no Repositório",
             Subtitle = "Selecione uma linha para validar integridade ou restaurar arquivos",
             Location = new Point(24, 190),
-            Size = new Size(940, 280),
-            Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+            Height = 280
         };
 
         _gridCatalog = new DataGridView
         {
             Location = new Point(16, 50),
-            Size = new Size(908, 215),
-            Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
             ReadOnly = true,
             SelectionMode = DataGridViewSelectionMode.FullRowSelect,
             MultiSelect = false,
@@ -141,17 +137,16 @@ public sealed class CatalogView : UserControl
         _gridCatalog.RowTemplate.Height = 28;
         _gridCatalog.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
 
-        cardGrid.Controls.Add(_gridCatalog);
-        Controls.Add(cardGrid);
+        _cardGrid.Controls.Add(_gridCatalog);
+        Controls.Add(_cardGrid);
 
         // --- Row 3: Restore & Action Panel ---
-        var cardRestore = new CardPanel
+        _cardRestore = new CardPanel
         {
             Title = "Ações de Restauração & Auditoria",
             Subtitle = "Restaure os arquivos para uma pasta segura ou faça verificação SHA-256",
             Location = new Point(24, 480),
-            Size = new Size(940, 140),
-            Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
+            Height = 150
         };
 
         var lblDest = new Label { Text = "Destino da Restauração:", Font = ModernTheme.BodyBold, Location = new Point(16, 52), AutoSize = true };
@@ -159,17 +154,13 @@ public sealed class CatalogView : UserControl
         {
             Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AreaBackupSample", "Restored"),
             Location = new Point(16, 74),
-            Size = new Size(580, 26),
-            Font = ModernTheme.BodyFont,
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            Font = ModernTheme.BodyFont
         };
         _btnBrowseDest = new ModernButton
         {
             Text = "Procurar...",
             ButtonStyle = ModernButtonStyle.Secondary,
-            Location = new Point(605, 72),
-            Size = new Size(110, 28),
-            Anchor = AnchorStyles.Top | AnchorStyles.Right
+            Size = new Size(110, 28)
         };
         _btnBrowseDest.Click += (_, _) => BrowseFolder(_txtRestoreDest);
 
@@ -177,18 +168,16 @@ public sealed class CatalogView : UserControl
         {
             Text = "Sobrescrever arquivos existentes",
             Font = ModernTheme.BodyFont,
-            Location = new Point(725, 74),
             Size = new Size(205, 24),
-            Checked = true,
-            Anchor = AnchorStyles.Top | AnchorStyles.Right
+            Checked = true
         };
 
         _btnValidateSelected = new ModernButton
         {
             Text = "🛡️  Validar Integridade",
             ButtonStyle = ModernButtonStyle.Secondary,
-            Location = new Point(16, 104),
-            Size = new Size(170, 30)
+            Location = new Point(16, 108),
+            Size = new Size(170, 32)
         };
         _btnValidateSelected.Click += async (_, _) => await ValidateSelectedAsync();
 
@@ -196,8 +185,8 @@ public sealed class CatalogView : UserControl
         {
             Text = "ℹ️  Ver Metadados",
             ButtonStyle = ModernButtonStyle.Secondary,
-            Location = new Point(195, 104),
-            Size = new Size(150, 30)
+            Location = new Point(195, 108),
+            Size = new Size(150, 32)
         };
         _btnViewInfo.Click += (_, _) => ViewSelectedInfo();
 
@@ -205,20 +194,56 @@ public sealed class CatalogView : UserControl
         {
             Text = "⚡  Restaurar Ponto Selecionado",
             ButtonStyle = ModernButtonStyle.Primary,
-            Location = new Point(355, 104),
-            Size = new Size(240, 30)
+            Location = new Point(355, 108),
+            Size = new Size(240, 32)
         };
         _btnRestoreSelected.Click += async (_, _) => await RestoreSelectedAsync();
 
-        cardRestore.Controls.Add(lblDest);
-        cardRestore.Controls.Add(_txtRestoreDest);
-        cardRestore.Controls.Add(_btnBrowseDest);
-        cardRestore.Controls.Add(_chkOverwrite);
-        cardRestore.Controls.Add(_btnValidateSelected);
-        cardRestore.Controls.Add(_btnViewInfo);
-        cardRestore.Controls.Add(_btnRestoreSelected);
+        _cardRestore.Controls.Add(lblDest);
+        _cardRestore.Controls.Add(_txtRestoreDest);
+        _cardRestore.Controls.Add(_btnBrowseDest);
+        _cardRestore.Controls.Add(_chkOverwrite);
+        _cardRestore.Controls.Add(_btnValidateSelected);
+        _cardRestore.Controls.Add(_btnViewInfo);
+        _cardRestore.Controls.Add(_btnRestoreSelected);
 
-        Controls.Add(cardRestore);
+        Controls.Add(_cardRestore);
+
+        PerformCustomLayout();
+    }
+
+    protected override void OnResize(EventArgs e)
+    {
+        base.OnResize(e);
+        PerformCustomLayout();
+    }
+
+    private void PerformCustomLayout()
+    {
+        if (_cardRepo == null || _cardGrid == null || _cardRestore == null) return;
+
+        int cardWidth = Math.Max(600, ClientSize.Width - 48);
+
+        // Card 1
+        _cardRepo.Location = new Point(24, 85);
+        _cardRepo.Width = cardWidth;
+        _txtRepository.Width = Math.Max(200, cardWidth - 480);
+        _btnBrowseRepo.Location = new Point(cardWidth - 455, 38);
+        _btnRefreshCatalog.Location = new Point(cardWidth - 345, 36);
+        _kpiTotalPoints.Location = new Point(cardWidth - 175, 6);
+
+        // Card 2
+        _cardGrid.Location = new Point(24, 190);
+        _cardGrid.Width = cardWidth;
+        _gridCatalog.Location = new Point(16, 50);
+        _gridCatalog.Size = new Size(cardWidth - 32, _cardGrid.Height - 66);
+
+        // Card 3
+        _cardRestore.Location = new Point(24, 480);
+        _cardRestore.Width = cardWidth;
+        _txtRestoreDest.Width = Math.Max(200, cardWidth - 350);
+        _btnBrowseDest.Location = new Point(cardWidth - 325, 72);
+        _chkOverwrite.Location = new Point(cardWidth - 210, 74);
     }
 
     public async Task RefreshCatalogAsync()

@@ -9,7 +9,7 @@ public sealed class MainForm : Form
 {
     private readonly BackupEngine _engine = new();
 
-    // Navigation & Views
+    // Navigation & Layout
     private Panel _pnlSidebar = null!;
     private Panel _pnlContent = null!;
 
@@ -30,8 +30,8 @@ public sealed class MainForm : Form
     private void InitializeApp()
     {
         Text = "Area Backup Engine — Central de Gestão & Testes (.NET 10)";
-        Size = new Size(1220, 780);
-        MinimumSize = new Size(1050, 650);
+        Size = new Size(1240, 800);
+        MinimumSize = new Size(1080, 680);
         StartPosition = FormStartPosition.CenterScreen;
         Font = ModernTheme.BodyFont;
         BackColor = ModernTheme.CanvasBg;
@@ -42,17 +42,16 @@ public sealed class MainForm : Form
         {
             Dock = DockStyle.Left,
             Width = 230,
-            BackColor = ModernTheme.SidebarBg,
-            Padding = new Padding(0)
+            BackColor = ModernTheme.SidebarBg
         };
 
         _pnlContent = new Panel
         {
             Dock = DockStyle.Fill,
-            BackColor = ModernTheme.CanvasBg,
-            Padding = new Padding(0)
+            BackColor = ModernTheme.CanvasBg
         };
 
+        // Add content first, then sidebar to ensure proper z-index and docking
         Controls.Add(_pnlContent);
         Controls.Add(_pnlSidebar);
 
@@ -61,13 +60,15 @@ public sealed class MainForm : Form
 
     private void BuildSidebar()
     {
-        // 1. Brand Logo & Title Area
+        _pnlSidebar.Controls.Clear();
+
+        // 1. Brand Header (Top)
         var pnlBrand = new Panel
         {
             Dock = DockStyle.Top,
-            Height = 85,
+            Height = 80,
             BackColor = Color.FromArgb(11, 17, 32),
-            Padding = new Padding(18, 18, 18, 12)
+            Padding = new Padding(18, 16, 18, 12)
         };
 
         var lblBrand = new Label
@@ -76,7 +77,7 @@ public sealed class MainForm : Form
             Font = new Font("Segoe UI", 13.5f, FontStyle.Bold),
             ForeColor = Color.White,
             AutoSize = true,
-            Location = new Point(16, 16)
+            Location = new Point(16, 14)
         };
 
         var lblSubtitle = new Label
@@ -85,43 +86,75 @@ public sealed class MainForm : Form
             Font = ModernTheme.SmallFont,
             ForeColor = ModernTheme.SidebarText,
             AutoSize = true,
-            Location = new Point(17, 44)
+            Location = new Point(17, 42)
         };
 
         pnlBrand.Controls.Add(lblBrand);
         pnlBrand.Controls.Add(lblSubtitle);
-        _pnlSidebar.Controls.Add(pnlBrand);
 
-        // 2. Navigation Menu
+        // 2. Footer (Bottom)
+        var pnlFooter = new Panel
+        {
+            Dock = DockStyle.Bottom,
+            Height = 65,
+            BackColor = Color.FromArgb(11, 17, 32),
+            Padding = new Padding(16, 12, 16, 12)
+        };
+
+        var lblStatusDot = new Label
+        {
+            Text = "● Engine Online",
+            Font = ModernTheme.SmallFont,
+            ForeColor = ModernTheme.Success,
+            AutoSize = true,
+            Location = new Point(16, 12)
+        };
+
+        var lblCopyright = new Label
+        {
+            Text = "Atual Sistemas © 2026",
+            Font = ModernTheme.MonoSmallFont,
+            ForeColor = Color.FromArgb(100, 116, 139),
+            AutoSize = true,
+            Location = new Point(16, 34)
+        };
+
+        pnlFooter.Controls.Add(lblStatusDot);
+        pnlFooter.Controls.Add(lblCopyright);
+
+        // 3. Navigation Container (Middle Fill)
         var pnlNav = new Panel
         {
             Dock = DockStyle.Fill,
-            Padding = new Padding(10, 15, 10, 15)
+            BackColor = ModernTheme.SidebarBg,
+            Padding = new Padding(10, 15, 10, 10),
+            AutoScroll = false
         };
 
-        string[] menuItems =
+        string[] menuTitles =
         [
             "⚡  Dashboard",
             "⚙️  Configuração",
-            "🧪  Laboratório de Testes",
-            "🗄️  Catálogo & Restore",
+            "🧪  Laboratório Testes",
+            "🗄️  Catálogo Restore",
             "📋  Console de Logs"
         ];
 
-        int y = 15;
-        for (int i = 0; i < menuItems.Length; i++)
+        _navButtons.Clear();
+        int y = 10;
+        for (int i = 0; i < menuTitles.Length; i++)
         {
             int index = i;
             var btn = new Button
             {
-                Text = menuItems[i],
+                Text = menuTitles[i],
                 Font = ModernTheme.BodyBold,
                 ForeColor = ModernTheme.SidebarText,
                 BackColor = ModernTheme.SidebarBg,
                 FlatStyle = FlatStyle.Flat,
                 FlatAppearance = { BorderSize = 0, MouseOverBackColor = ModernTheme.SidebarHover },
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(12, 0, 0, 0),
+                Padding = new Padding(14, 0, 0, 0),
                 Size = new Size(210, 42),
                 Location = new Point(10, y),
                 Cursor = Cursors.Hand,
@@ -134,38 +167,11 @@ public sealed class MainForm : Form
             y += 48;
         }
 
+        // Add to sidebar in correct docking order
         _pnlSidebar.Controls.Add(pnlNav);
-
-        // 3. Bottom Footer in Sidebar
-        var pnlFooter = new Panel
-        {
-            Dock = DockStyle.Bottom,
-            Height = 70,
-            BackColor = Color.FromArgb(11, 17, 32),
-            Padding = new Padding(15)
-        };
-
-        var lblStatusDot = new Label
-        {
-            Text = "● Engine Ativa",
-            Font = ModernTheme.SmallFont,
-            ForeColor = ModernTheme.Success,
-            AutoSize = true,
-            Location = new Point(16, 15)
-        };
-
-        var lblCopyright = new Label
-        {
-            Text = "Atual Sistemas © 2026",
-            Font = ModernTheme.MonoSmallFont,
-            ForeColor = Color.FromArgb(100, 116, 139),
-            AutoSize = true,
-            Location = new Point(16, 36)
-        };
-
-        pnlFooter.Controls.Add(lblStatusDot);
-        pnlFooter.Controls.Add(lblCopyright);
+        _pnlSidebar.Controls.Add(pnlBrand);
         _pnlSidebar.Controls.Add(pnlFooter);
+        pnlNav.BringToFront();
     }
 
     private void SetupViews()
@@ -183,17 +189,19 @@ public sealed class MainForm : Form
             Retention = new RetentionPolicy { Enabled = true, KeepFullBackups = 4, KeepIncrementalBackups = 30 }
         };
 
-        // Create Views
-        _logsView = new LogsView();
-        _configView = new ConfigView(initialConfig, LogMessage);
-        _dashboardView = new DashboardView(_engine, () => _configView.Configuration, LogMessage);
-        _testLabView = new TestLabView(_engine, LogMessage);
-        _catalogView = new CatalogView(_engine, () => _configView.Configuration, LogMessage);
+        // Create Views with initial size matching content area
+        var initialContentSize = new Size(Width - 230, Height);
+
+        _logsView = new LogsView { Size = initialContentSize };
+        _configView = new ConfigView(initialConfig, LogMessage) { Size = initialContentSize };
+        _dashboardView = new DashboardView(_engine, () => _configView.Configuration, LogMessage) { Size = initialContentSize };
+        _testLabView = new TestLabView(_engine, LogMessage) { Size = initialContentSize };
+        _catalogView = new CatalogView(_engine, () => _configView.Configuration, LogMessage) { Size = initialContentSize };
 
         // Wire engine global events to log view
         _engine.ProgressChanged += (_, p) =>
         {
-            if (p.Percentage % 20 < 1)
+            if (p.Percentage % 25 < 1)
             {
                 LogMessage("INFO", $"[{p.Stage}] {p.Percentage:F0}% - Processados: {p.FilesProcessed}/{p.FilesTotal} arquivos");
             }
@@ -214,7 +222,7 @@ public sealed class MainForm : Form
             LogMessage("ERROR", $"Erro na engine: {err.Message}");
         };
 
-        LogMessage("SUCCESS", "Area Backup Studio inicializado com sucesso (.NET 10 Engine ativa).");
+        LogMessage("SUCCESS", "Area Backup Studio inicializado (.NET 10 Engine ativa).");
     }
 
     private void SwitchView(int viewIndex)
@@ -233,6 +241,7 @@ public sealed class MainForm : Form
 
         targetView.Dock = DockStyle.Fill;
         _pnlContent.Controls.Add(targetView);
+        targetView.BringToFront();
 
         // Update sidebar button active state
         for (int i = 0; i < _navButtons.Count; i++)

@@ -12,18 +12,27 @@ public sealed class DashboardView : UserControl
     private readonly Action<string, string> _logAction;
     private CancellationTokenSource? _cts;
 
-    // Controls
+    // Header
+    private Label _lblTitle = null!;
+    private Label _lblSubtitle = null!;
+
+    // KPIs
+    private FlowLayoutPanel _pnlKpis = null!;
     private MetricCard _kpiStatus = null!;
     private MetricCard _kpiRepo = null!;
     private MetricCard _kpiLastBackup = null!;
     private MetricCard _kpiEfficiency = null!;
 
+    // Action Card
+    private CardPanel _cardAction = null!;
     private RadioButton _rbAuto = null!;
     private RadioButton _rbIncremental = null!;
     private RadioButton _rbFull = null!;
     private ModernButton _btnStart = null!;
     private ModernButton _btnCancel = null!;
 
+    // Telemetry Card
+    private CardPanel _cardTelemetry = null!;
     private Label _lblStageBadge = null!;
     private Label _lblStageDesc = null!;
     private ModernProgressBar _progressBar = null!;
@@ -47,10 +56,9 @@ public sealed class DashboardView : UserControl
         Dock = DockStyle.Fill;
         BackColor = ModernTheme.CanvasBg;
         AutoScroll = true;
-        Padding = new Padding(24);
 
         // Header Title
-        var lblTitle = new Label
+        _lblTitle = new Label
         {
             Text = "Dashboard de Operações",
             Font = ModernTheme.TitleFont,
@@ -58,7 +66,7 @@ public sealed class DashboardView : UserControl
             AutoSize = true,
             Location = new Point(24, 20)
         };
-        var lblSubtitle = new Label
+        _lblSubtitle = new Label
         {
             Text = "Visão geral em tempo real, telemetria da engine e disparo de rotinas de backup.",
             Font = ModernTheme.BodyFont,
@@ -66,71 +74,41 @@ public sealed class DashboardView : UserControl
             AutoSize = true,
             Location = new Point(24, 52)
         };
-        Controls.Add(lblTitle);
-        Controls.Add(lblSubtitle);
+        Controls.Add(_lblTitle);
+        Controls.Add(_lblSubtitle);
 
         // --- Row 1: KPI Cards ---
-        var pnlKpis = new FlowLayoutPanel
+        _pnlKpis = new FlowLayoutPanel
         {
             Location = new Point(24, 85),
-            Size = new Size(880, 105),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+            Size = new Size(880, 100),
             WrapContents = false,
-            AutoScroll = false
+            AutoScroll = false,
+            Margin = new Padding(0),
+            Padding = new Padding(0)
         };
 
-        _kpiStatus = new MetricCard
-        {
-            Title = "Status da Engine",
-            Value = "Pronto",
-            Subtitle = "Aguardando tarefas",
-            Width = 205,
-            Height = 95
-        };
+        _kpiStatus = new MetricCard { Title = "Status da Engine", Value = "Pronto", Subtitle = "Aguardando tarefas", Height = 95 };
         _kpiStatus.SetBadge("ONLINE", ModernTheme.SuccessLight, ModernTheme.Success);
 
-        _kpiRepo = new MetricCard
-        {
-            Title = "Repositório",
-            Value = "Configurado",
-            Subtitle = "Pronto para gravação",
-            Width = 215,
-            Height = 95
-        };
-
-        _kpiLastBackup = new MetricCard
-        {
-            Title = "Último Backup",
-            Value = "--",
-            Subtitle = "Nenhum nesta sessão",
-            Width = 215,
-            Height = 95
-        };
-
-        _kpiEfficiency = new MetricCard
-        {
-            Title = "Integridade",
-            Value = "100%",
-            Subtitle = "SHA-256 verificado",
-            Width = 215,
-            Height = 95
-        };
+        _kpiRepo = new MetricCard { Title = "Repositório", Value = "Configurado", Subtitle = "Pronto para gravação", Height = 95 };
+        _kpiLastBackup = new MetricCard { Title = "Último Backup", Value = "--", Subtitle = "Nenhum nesta sessão", Height = 95 };
+        _kpiEfficiency = new MetricCard { Title = "Integridade", Value = "100%", Subtitle = "SHA-256 verificado", Height = 95 };
         _kpiEfficiency.SetBadge("SEGURO", ModernTheme.PrimaryLight, ModernTheme.Primary);
 
-        pnlKpis.Controls.Add(_kpiStatus);
-        pnlKpis.Controls.Add(_kpiRepo);
-        pnlKpis.Controls.Add(_kpiLastBackup);
-        pnlKpis.Controls.Add(_kpiEfficiency);
-        Controls.Add(pnlKpis);
+        _pnlKpis.Controls.Add(_kpiStatus);
+        _pnlKpis.Controls.Add(_kpiRepo);
+        _pnlKpis.Controls.Add(_kpiLastBackup);
+        _pnlKpis.Controls.Add(_kpiEfficiency);
+        Controls.Add(_pnlKpis);
 
-        // --- Row 2: Action & Execution Card ---
-        var cardAction = new CardPanel
+        // --- Row 2: Action Card ---
+        _cardAction = new CardPanel
         {
             Title = "Executar Rotina de Backup",
             Subtitle = "Selecione a modalidade e dispare a engine de proteção",
-            Location = new Point(24, 205),
-            Size = new Size(880, 140),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            Location = new Point(24, 195),
+            Height = 145
         };
 
         _rbAuto = new RadioButton
@@ -178,21 +156,20 @@ public sealed class DashboardView : UserControl
         };
         _btnCancel.Click += (_, _) => _cts?.Cancel();
 
-        cardAction.Controls.Add(_rbAuto);
-        cardAction.Controls.Add(_rbIncremental);
-        cardAction.Controls.Add(_rbFull);
-        cardAction.Controls.Add(_btnStart);
-        cardAction.Controls.Add(_btnCancel);
-        Controls.Add(cardAction);
+        _cardAction.Controls.Add(_rbAuto);
+        _cardAction.Controls.Add(_rbIncremental);
+        _cardAction.Controls.Add(_rbFull);
+        _cardAction.Controls.Add(_btnStart);
+        _cardAction.Controls.Add(_btnCancel);
+        Controls.Add(_cardAction);
 
-        // --- Row 3: Live Telemetry Card ---
-        var cardTelemetry = new CardPanel
+        // --- Row 3: Telemetry Card ---
+        _cardTelemetry = new CardPanel
         {
             Title = "Telemetria & Progresso em Tempo Real",
             Subtitle = "Métricas em streaming direto da engine de backup",
-            Location = new Point(24, 360),
-            Size = new Size(880, 240),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            Location = new Point(24, 350),
+            Height = 230
         };
 
         _lblStageBadge = new Label
@@ -218,8 +195,7 @@ public sealed class DashboardView : UserControl
         _progressBar = new ModernProgressBar
         {
             Location = new Point(24, 88),
-            Size = new Size(830, 24),
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+            Height = 24,
             Value = 0
         };
 
@@ -255,9 +231,7 @@ public sealed class DashboardView : UserControl
             Text = "Tempo: 00:00:00 | Restante: --:--:--",
             Font = ModernTheme.BodyFont,
             ForeColor = ModernTheme.TextSecondary,
-            Location = new Point(620, 125),
-            AutoSize = true,
-            Anchor = AnchorStyles.Top | AnchorStyles.Right
+            AutoSize = true
         };
 
         _lblCurrentFile = new Label
@@ -266,20 +240,54 @@ public sealed class DashboardView : UserControl
             Font = ModernTheme.MonoSmallFont,
             ForeColor = ModernTheme.TextMuted,
             Location = new Point(24, 160),
-            Size = new Size(830, 22),
-            AutoEllipsis = true,
-            Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            Height = 22,
+            AutoEllipsis = true
         };
 
-        cardTelemetry.Controls.Add(_lblStageBadge);
-        cardTelemetry.Controls.Add(_lblStageDesc);
-        cardTelemetry.Controls.Add(_progressBar);
-        cardTelemetry.Controls.Add(_lblSpeed);
-        cardTelemetry.Controls.Add(_lblFiles);
-        cardTelemetry.Controls.Add(_lblBytes);
-        cardTelemetry.Controls.Add(_lblEta);
-        cardTelemetry.Controls.Add(_lblCurrentFile);
-        Controls.Add(cardTelemetry);
+        _cardTelemetry.Controls.Add(_lblStageBadge);
+        _cardTelemetry.Controls.Add(_lblStageDesc);
+        _cardTelemetry.Controls.Add(_progressBar);
+        _cardTelemetry.Controls.Add(_lblSpeed);
+        _cardTelemetry.Controls.Add(_lblFiles);
+        _cardTelemetry.Controls.Add(_lblBytes);
+        _cardTelemetry.Controls.Add(_lblEta);
+        _cardTelemetry.Controls.Add(_lblCurrentFile);
+        Controls.Add(_cardTelemetry);
+
+        PerformCustomLayout();
+    }
+
+    protected override void OnResize(EventArgs e)
+    {
+        base.OnResize(e);
+        PerformCustomLayout();
+    }
+
+    private void PerformCustomLayout()
+    {
+        if (_cardAction == null || _cardTelemetry == null || _pnlKpis == null) return;
+
+        int cardWidth = Math.Max(600, ClientSize.Width - 48);
+
+        // Align KPI Cards evenly
+        _pnlKpis.Location = new Point(24, 85);
+        _pnlKpis.Width = cardWidth;
+        int kpiCardWidth = (cardWidth - 36) / 4;
+        _kpiStatus.Width = kpiCardWidth;
+        _kpiRepo.Width = kpiCardWidth;
+        _kpiLastBackup.Width = kpiCardWidth;
+        _kpiEfficiency.Width = kpiCardWidth;
+
+        // Card Action
+        _cardAction.Location = new Point(24, 195);
+        _cardAction.Width = cardWidth;
+
+        // Card Telemetry
+        _cardTelemetry.Location = new Point(24, 350);
+        _cardTelemetry.Width = cardWidth;
+        _progressBar.Width = cardWidth - 48;
+        _lblCurrentFile.Width = cardWidth - 48;
+        _lblEta.Location = new Point(cardWidth - 280, 125);
     }
 
     public async Task RunBackupAsync()
